@@ -1,0 +1,230 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Botalyst – Smart Data Analysis</title>
+
+    <style>
+      body {
+        margin: 0;
+        font-family: "Segoe UI", Arial, sans-serif;
+        height: 100vh;
+        background: linear-gradient(120deg, #0f2027, #203a43, #2c5364);
+        color: white;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .container {
+        width: 90%;
+        max-width: 1000px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 40px;
+      }
+
+      /* Left content */
+      .left {
+        flex: 1;
+      }
+
+      .logo {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 20px;
+      }
+
+      .logo-icon {
+        width: 55px;
+        height: 55px;
+        background: linear-gradient(135deg, #00c6ff, #0072ff);
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 28px;
+        font-weight: bold;
+      }
+
+      .logo-text {
+        font-size: 32px;
+        font-weight: bold;
+      }
+
+      h1 {
+        font-size: 40px;
+        margin: 10px 0;
+      }
+
+      p {
+        font-size: 18px;
+        color: #dcdcdc;
+        max-width: 500px;
+        line-height: 1.5;
+      }
+
+      .btn-group {
+        margin-top: 30px;
+        display: flex;
+        gap: 15px;
+      }
+
+      .btn {
+        padding: 14px 26px;
+        font-size: 16px;
+        border-radius: 10px;
+        border: none;
+        cursor: pointer;
+        font-weight: bold;
+        transition: 0.3s;
+      }
+
+      .btn-primary {
+        background: #00c6ff;
+        color: #000;
+      }
+
+      .btn-primary:hover {
+        background: #00aee6;
+      }
+
+      .btn-secondary {
+        background: transparent;
+        color: white;
+        border: 2px solid #00c6ff;
+      }
+
+      .btn-secondary:hover {
+        background: #00c6ff;
+        color: #000;
+      }
+
+      /* Right card */
+      .right {
+        flex: 1;
+        background: rgba(255, 255, 255, 0.08);
+        padding: 35px;
+        border-radius: 20px;
+        backdrop-filter: blur(10px);
+      }
+
+      .feature {
+        margin-bottom: 20px;
+        display: flex;
+        gap: 12px;
+        align-items: center;
+      }
+
+      .feature-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        background: #00c6ff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: black;
+        font-weight: bold;
+      }
+
+      .feature-text {
+        font-size: 16px;
+      }
+      body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+        color: white;
+        height: 100vh;
+      }
+
+      .header {
+        text-align: center;
+        padding-top: 80px;
+      }
+
+      .header img {
+        width: 140px;
+        margin-bottom: 15px;
+      }
+
+      .header h1 {
+        font-size: 42px;
+        margin: 10px 0;
+      }
+
+      .header p {
+        color: #cfd8dc;
+        font-size: 18px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <!-- LEFT -->
+      <div class="left">
+        <div class="logo">
+          <div class="logo-icon">B</div>
+          <div class="logo-text">Botalyst</div>
+        </div>
+
+        <h1>AI-Powered Data Analysis</h1>
+        <p>
+          Upload your CSV or Excel files and let Botalyst analyze, visualize,
+          and generate professional reports instantly.
+        </p>
+
+        <div class="btn-group">
+          <button
+            class="btn btn-primary"
+            onclick="window.location.href = '/login'"
+          >
+            Login
+          </button>
+          <button
+            class="btn btn-secondary"
+            onclick="window.location.href = '/signup'"
+          >
+            Sign Up
+          </button>
+        </div>
+      </div>
+      <div class="header">
+        <img
+          src="{{ url_for('static', filename='images/botalyst-logo.png') }}"
+          alt="BotAlyst Logo"
+        />
+        <h1>BotAlyst</h1>
+        <p>AI-powered Data Analysis Assistant</p>
+      </div>
+      
+
+      <!-- RIGHT -->
+      <div class="right">
+        <div class="feature">
+          <div class="feature-icon">📊</div>
+          <div class="feature-text">Automatic Data Analysis</div>
+        </div>
+
+        <div class="feature">
+          <div class="feature-icon">📈</div>
+          <div class="feature-text">Charts & Visual Reports</div>
+        </div>
+
+        <div class="feature">
+          <div class="feature-icon">🤖</div>
+          <div class="feature-text">AI-Assisted Insights</div>
+        </div>
+
+        <div class="feature">
+          <div class="feature-icon">⬇️</div>
+          <div class="feature-text">Downloadable Reports</div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

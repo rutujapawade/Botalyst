@@ -1,0 +1,25 @@
+BOTALYST EDA REPORT
+====================
+
+File: year-past.csv
+Rows: 103
+Columns: 1
+
+Column Names:
+Year
+
+Missing Values:
+Year    0
+dtype: int64
+
+Summary (Describe):
+              Year
+count   103.000000
+mean   1972.000000
+std      29.877528
+min    1921.000000
+25%    1946.500000
+50%    1972.000000
+75%    1997.500000
+max    2023.000000
+

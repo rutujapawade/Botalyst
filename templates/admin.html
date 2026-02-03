@@ -1,0 +1,140 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Botalyst - Admin</title>
+    <style>
+      body {
+        font-family: Arial;
+        background: #f5f5f5;
+        padding: 20px;
+      }
+      .card {
+        background: white;
+        padding: 15px;
+        border-radius: 10px;
+        margin-bottom: 15px;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      th,
+      td {
+        padding: 10px;
+        border-bottom: 1px solid #ddd;
+        text-align: left;
+        font-size: 14px;
+      }
+      input {
+        padding: 10px;
+        width: 300px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+      }
+      button {
+        padding: 10px 15px;
+        background: #111;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+      }
+      button:hover {
+        background: #333;
+      }
+    </style>
+  </head>
+
+  <body>
+    <h2>👨‍💻 Admin Dashboard</h2>
+
+    <div class="card">
+      <input
+        type="text"
+        id="searchBox"
+        placeholder="Search by name/email/mobile..."
+      />
+      <button onclick="searchUsers()">Search</button>
+      <button onclick="loadUsers()">Refresh</button>
+      <button onclick="logoutAdmin()" style="background:#ff3b3b;">Logout</button>
+    </div>
+
+    <div class="card">
+      <h3>Users</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Mobile</th>
+            <th>Created</th>
+            <th>Last Login</th>
+            <th>Last IP</th>
+            <th>Projects (Titles Only)</th>
+          </tr>
+        </thead>
+        <tbody id="userTable"></tbody>
+      </table>
+    </div>
+
+    <script>
+      async function loadUsers() {
+        const res = await fetch("/api/admin/users");
+        const data = await res.json();
+
+        const table = document.getElementById("userTable");
+        table.innerHTML = "";
+
+        if (data.success) {
+          data.users.forEach((u) => {
+            const row = document.createElement("tr");
+            row.innerHTML = `
+              <td>${u.id}</td>
+              <td>${u.full_name}</td>
+              <td>${u.email}</td>
+              <td>${u.mobile}</td>
+              <td>${u.created_at}</td>
+              <td>${u.last_login || ""}</td>
+              <td>${u.last_ip || ""}</td>
+              <td>${u.projects.join(", ")}</td>
+            `;
+            table.appendChild(row);
+          });
+        }
+      }
+
+      async function searchUsers() {
+        const q = document.getElementById("searchBox").value.trim();
+        const res = await fetch(`/api/admin/search?q=${q}`);
+        const data = await res.json();
+
+        const table = document.getElementById("userTable");
+        table.innerHTML = "";
+
+        if (data.success) {
+          data.users.forEach((u) => {
+            const row = document.createElement("tr");
+            row.innerHTML = `
+              <td>${u.id}</td>
+              <td>${u.full_name}</td>
+              <td>${u.email}</td>
+              <td>${u.mobile}</td>
+              <td>${u.created_at}</td>
+              <td>${u.last_login || ""}</td>
+              <td>${u.last_ip || ""}</td>
+              <td>${u.projects.join(", ")}</td>
+            `;
+            table.appendChild(row);
+          });
+        }
+      }
+
+      function logoutAdmin() {
+        window.location.href = "/api/admin/logout";
+      }
+
+      window.onload = loadUsers;
+    </script>
+  </body>
+</html>

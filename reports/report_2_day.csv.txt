@@ -1,0 +1,30 @@
+BOTALYST EDA REPORT
+====================
+
+File: day.csv
+Rows: 31
+Columns: 3
+
+Column Names:
+Numeric, Numeric-2, Numeric-Suffix
+
+Missing Values:
+Numeric           0
+Numeric-2         0
+Numeric-Suffix    0
+dtype: int64
+
+Summary (Describe):
+          Numeric  Numeric-2 Numeric-Suffix
+count   31.000000  31.000000             31
+unique        NaN        NaN             31
+top           NaN        NaN            1st
+freq          NaN        NaN              1
+mean    16.000000  16.000000            NaN
+std      9.092121   9.092121            NaN
+min      1.000000   1.000000            NaN
+25%      8.500000   8.500000            NaN
+50%     16.000000  16.000000            NaN
+75%     23.500000  23.500000            NaN
+max     31.000000  31.000000            NaN
+

@@ -1,0 +1,138 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Botalyst – Sign Up</title>
+    <style>
+      body {
+        margin: 0;
+        height: 100vh;
+        font-family: Arial;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+      }
+
+      .card {
+        background: white;
+        padding: 30px;
+        width: 380px;
+        border-radius: 12px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+      }
+
+      h2 {
+        text-align: center;
+        margin-bottom: 20px;
+      }
+
+      input {
+        width: 100%;
+        padding: 12px;
+        margin-bottom: 12px;
+        border-radius: 6px;
+        border: 1px solid #ccc;
+      }
+
+      button {
+        width: 100%;
+        padding: 12px;
+        border: none;
+        border-radius: 6px;
+        background: #111;
+        color: white;
+        font-size: 16px;
+        cursor: pointer;
+      }
+
+      button:hover {
+        background: #333;
+      }
+
+      .msg {
+        margin-top: 10px;
+        text-align: center;
+        color: red;
+      }
+
+      .link {
+        margin-top: 15px;
+        text-align: center;
+      }
+
+      .link a {
+        text-decoration: none;
+        color: #007bff;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="card">
+      <h2>Create Your Account</h2>
+
+      <input type="text" id="fullName" placeholder="Full Name" />
+      <input type="email" id="email" placeholder="Email (optional)" />
+      <input type="text" id="mobile" placeholder="Mobile Number" />
+      <input type="password" id="password" placeholder="Password" />
+      <input
+        type="password"
+        id="confirmPassword"
+        placeholder="Confirm Password"
+      />
+
+      <button onclick="signup()">Sign Up</button>
+
+      <div class="msg" id="msg"></div>
+
+      <div class="link">
+        Already have an account?
+        <a href="/login">Login</a>
+      </div>
+    </div>
+
+    <script>
+      async function signup() {
+        const fullName = document.getElementById("fullName").value.trim();
+        const email = document.getElementById("email").value.trim();
+        const mobile = document.getElementById("mobile").value.trim();
+        const password = document.getElementById("password").value.trim();
+        const confirmPassword =
+          document.getElementById("confirmPassword").value.trim();
+
+        const msg = document.getElementById("msg");
+        msg.innerText = "";
+
+        if (!fullName || !mobile || !password || !confirmPassword) {
+          msg.innerText = "Please fill all required fields";
+          return;
+        }
+
+        if (password !== confirmPassword) {
+          msg.innerText = "Passwords do not match";
+          return;
+        }
+
+        const res = await fetch("/api/signup", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            full_name: fullName,
+            email: email,
+            mobile: mobile,
+            password: password
+          })
+        });
+
+        const data = await res.json();
+
+        if (data.success) {
+          alert("Signup successful! Please login.");
+          window.location.href = "/login";
+        } else {
+          msg.innerText = data.message;
+        }
+      }
+    </script>
+  </body>
+</html>

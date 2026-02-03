@@ -1,0 +1,435 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Botalyst - User</title>
+    <style>
+      body {
+        margin: 0;
+        font-family: Arial;
+        display: flex;
+        height: 100vh;
+      }
+
+      /* Sidebar */
+      .sidebar {
+        width: 280px;
+        background: #111;
+        color: white;
+        padding: 15px;
+        overflow-y: auto;
+
+        /* ✅ important for profile section bottom */
+        display: flex;
+        flex-direction: column;
+      }
+
+      .history-item {
+        background: #222;
+        padding: 10px;
+        margin: 8px 0;
+        border-radius: 8px;
+        cursor: pointer;
+      }
+      .history-item small {
+        color: #aaa;
+        display: block;
+      }
+      .history-item b {
+        display: block;
+        outline: none;
+      }
+
+      /* ✅ Profile section bottom like ChatGPT */
+      .profile-box {
+        margin-top: auto;
+        padding-top: 15px;
+        border-top: 1px solid #333;
+      }
+
+      .profile-info {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 10px;
+      }
+
+      .avatar {
+        width: 40px;
+        height: 40px;
+        background: #222;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border-radius: 50%;
+        font-size: 18px;
+      }
+
+      .logout-btn {
+        width: 100%;
+        padding: 10px;
+        border: none;
+        border-radius: 8px;
+        background: #ff3b3b;
+        color: white;
+        cursor: pointer;
+        font-weight: bold;
+      }
+
+      .logout-btn:hover {
+        background: #e02f2f;
+      }
+
+      /* Chat Area */
+      .chat-area {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .chat-box {
+        flex: 1;
+        padding: 20px;
+        overflow-y: auto;
+        background: #f5f5f5;
+      }
+
+      .msg {
+        padding: 10px;
+        margin: 8px 0;
+        border-radius: 8px;
+        max-width: 70%;
+        white-space: pre-line;
+      }
+
+      .user {
+        background: #007bff;
+        color: white;
+        margin-left: auto;
+      }
+
+      .bot {
+        background: white;
+        border: 1px solid #ddd;
+      }
+
+      .input-area {
+        display: flex;
+        gap: 8px;
+        padding: 10px;
+        border-top: 1px solid #ddd;
+        background: white;
+      }
+
+      input[type="text"] {
+        flex: 1;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+      }
+
+      button {
+        padding: 10px 15px;
+        border: none;
+        background: #111;
+        color: white;
+        border-radius: 6px;
+        cursor: pointer;
+      }
+
+      button:hover {
+        background: #333;
+      }
+
+      .newchat-btn {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 12px;
+        border: none;
+        border-radius: 8px;
+        background: #222;
+        color: white;
+        cursor: pointer;
+        font-weight: bold;
+      }
+
+      .newchat-btn:hover {
+        background: #333;
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <h2>Botalyst</h2>
+      <p>History</p>
+      <button class="newchat-btn" onclick="newChat()">+ New Chat</button>
+
+      <div id="historyList"></div>
+
+      <!-- ✅ Profile Section -->
+      <div class="profile-box">
+        <div class="profile-info">
+          <div class="avatar">👤</div>
+          <div>
+            <b>{{ full_name }}</b>
+            <small style="display: block; color: #aaa">{{ email }}</small>
+          </div>
+        </div>
+
+        <button class="logout-btn" onclick="logoutUser()">Logout</button>
+      </div>
+    </div>
+
+    <!-- Chat Area -->
+    <div class="chat-area">
+      <div class="chat-box" id="chatBox">
+        <div class="msg bot">
+          Hello 👋 I am Botalyst. Upload a CSV/Excel file and I will generate
+          report.
+        </div>
+      </div>
+
+      <div class="input-area">
+        <input type="file" id="fileInput" />
+        <input type="text" id="userInput" placeholder="Type your message..." />
+        <button onclick="startVoice()">🎤</button>
+        <button onclick="uploadFile()">Upload</button>
+        <button onclick="sendMessage()">Send</button>
+      </div>
+    </div>
+
+    <script>
+      const userId = "{{ session['user_id'] }}";
+
+      function logoutUser() {
+        window.location.href = "/api/logout";
+      }
+
+      function addMessage(text, sender) {
+        let chatBox = document.getElementById("chatBox");
+        let msg = document.createElement("div");
+        msg.classList.add("msg");
+        msg.classList.add(sender);
+        msg.innerText = text;
+        chatBox.appendChild(msg);
+        chatBox.scrollTop = chatBox.scrollHeight;
+      }
+      async function newChat() {
+        await fetch("/api/new-chat", { method: "POST" });
+
+        // clear chat UI
+        document.getElementById("chatBox").innerHTML =
+          `<div class="msg bot">Hello 👋 I am Botalyst. Ask me anything!</div>`;
+      }
+
+      // ✅ Load history from database
+      async function loadHistory() {
+        const res = await fetch(`/api/history/${userId}`);
+        const data = await res.json();
+
+        const historyList = document.getElementById("historyList");
+        historyList.innerHTML = "";
+
+        if (data.success) {
+          data.history.forEach((item) => {
+            const div = document.createElement("div");
+            div.onclick = () => loadProjectChat(item.id);
+
+            div.innerHTML = `
+  <div style="display:flex; justify-content:space-between; align-items:center; gap:8px;">
+    <b contenteditable="true"
+       onblur="editTitle(${item.id}, this.innerText)"
+       style="flex:1;">
+      ${item.title}
+    </b>
+    <button onclick="deleteProject(event, ${item.id})"
+            style="background:#ff3b3b; padding:6px 10px; border-radius:6px;">
+      X
+    </button>
+  </div>
+  <small>${item.date}</small>
+`;
+
+            historyList.appendChild(div);
+          });
+        }
+      }
+
+      // ✅ Edit title and save to DB
+      async function editTitle(projectId, newTitle) {
+        await fetch("/api/update-title", {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ project_id: projectId, new_title: newTitle }),
+        });
+      }
+
+      // ✅ Upload file + auto generate report + open result page
+      async function uploadFile() {
+        const fileInput = document.getElementById("fileInput");
+        const file = fileInput.files[0];
+
+        if (!file) {
+          alert("Please select a file first!");
+          return;
+        }
+
+        const formData = new FormData();
+        formData.append("user_id", userId);
+        formData.append("file", file);
+
+        const res = await fetch("/api/upload", {
+          method: "POST",
+          body: formData,
+        });
+
+        const data = await res.json();
+
+        if (data.success) {
+          addMessage(`File uploaded: ${data.file_name}`, "bot");
+
+          // ✅ Auto generate report for CSV/Excel
+          const res2 = await fetch("/api/generate-report", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              user_id: userId,
+              file_name: data.file_name,
+            }),
+          });
+
+          const rep = await res2.json();
+
+          if (rep.success) {
+            addMessage(`Report generated: ${rep.report_name}`, "bot");
+
+            // open result page
+            window.location.href = `/result/${userId}/${data.file_name}`;
+
+            // download report
+            window.open(`/api/download-report/${rep.report_name}`, "_blank");
+          } else {
+            addMessage("Report error: " + rep.message, "bot");
+          }
+        } else {
+          addMessage("Upload error: " + data.message, "bot");
+        }
+      }
+
+      // ✅ Send message
+      async function sendMessage() {
+        let input = document.getElementById("userInput");
+        let message = input.value.trim();
+        if (message === "") return;
+
+        addMessage(message, "user");
+        input.value = "";
+
+        showTyping();
+
+        const res = await fetch("/api/chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ user_id: userId, message: message }),
+        });
+
+        const data = await res.json();
+        hideTyping();
+
+        if (data.success) {
+          addMessage(data.reply, "bot");
+          loadHistory();
+        } else {
+          addMessage("Error: " + data.message, "bot");
+        }
+      }
+      async function loadProjectChat(projectId) {
+        const res = await fetch(`/api/project/${projectId}/messages`);
+        const data = await res.json();
+
+        const chatBox = document.getElementById("chatBox");
+        chatBox.innerHTML = "";
+
+        if (data.success) {
+          data.messages.forEach((m) => {
+            addMessage(m.message, m.sender);
+          });
+        }
+      }
+
+      async function deleteProject(event, projectId) {
+        event.stopPropagation(); // prevents opening chat on click
+
+        if (!confirm("Delete this chat?")) return;
+
+        const res = await fetch(`/api/delete-project/${projectId}`, {
+          method: "DELETE",
+        });
+
+        const data = await res.json();
+
+        if (data.success) {
+          loadHistory();
+          document.getElementById("chatBox").innerHTML =
+            `<div class="msg bot">Chat deleted. Start a new chat 👋</div>`;
+        } else {
+          alert("Error: " + data.message);
+        }
+      }
+
+      function startVoice() {
+        if (!("webkitSpeechRecognition" in window)) {
+          alert(
+            "Voice recognition not supported in this browser. Use Google Chrome.",
+          );
+          return;
+        }
+
+        const recognition = new webkitSpeechRecognition();
+        recognition.lang = "en-IN"; // you can change to "hi-IN"
+        recognition.interimResults = false;
+
+        recognition.onresult = function (event) {
+          const text = event.results[0][0].transcript;
+          document.getElementById("userInput").value = text;
+        };
+
+        recognition.onerror = function () {
+          alert("Voice recognition error. Try again.");
+        };
+
+        recognition.start();
+      }
+
+      document
+        .getElementById("userInput")
+        .addEventListener("keydown", function (e) {
+          if (e.key === "Enter") {
+            sendMessage();
+          }
+        });
+
+      function showTyping() {
+        let chatBox = document.getElementById("chatBox");
+
+        // avoid duplicate typing msg
+        if (document.getElementById("typingMsg")) return;
+
+        let typing = document.createElement("div");
+        typing.classList.add("msg", "bot");
+        typing.id = "typingMsg";
+        typing.innerText = "Botalyst is typing...";
+        chatBox.appendChild(typing);
+        chatBox.scrollTop = chatBox.scrollHeight;
+      }
+
+      function hideTyping() {
+        let typing = document.getElementById("typingMsg");
+        if (typing) typing.remove();
+      }
+
+      window.onload = loadHistory;
+    </script>
+  </body>
+</html>

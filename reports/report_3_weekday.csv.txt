@@ -1,0 +1,31 @@
+BOTALYST EDA REPORT
+====================
+
+File: weekday.csv
+Rows: 7
+Columns: 4
+
+Column Names:
+Name, Abbreviation, Numeric, Numeric-2
+
+Missing Values:
+Name            0
+Abbreviation    0
+Numeric         0
+Numeric-2       0
+dtype: int64
+
+Summary (Describe):
+          Name Abbreviation   Numeric  Numeric-2
+count        7            7  7.000000   7.000000
+unique       7            7       NaN        NaN
+top     Monday         Mon.       NaN        NaN
+freq         1            1       NaN        NaN
+mean       NaN          NaN  4.000000   4.000000
+std        NaN          NaN  2.160247   2.160247
+min        NaN          NaN  1.000000   1.000000
+25%        NaN          NaN  2.500000   2.500000
+50%        NaN          NaN  4.000000   4.000000
+75%        NaN          NaN  5.500000   5.500000
+max        NaN          NaN  7.000000   7.000000
+
