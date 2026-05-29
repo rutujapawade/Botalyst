@@ -64,6 +64,12 @@ def login_page():
 def signup_page():
     return render_template("signup.html")
 
+@app.route('/test-db')
+def test_db():
+    cur = mysql.connection.cursor()
+    cur.execute("SHOW TABLES")
+    data = cur.fetchall()
+    return str(data)
 
 
 @app.route("/user")

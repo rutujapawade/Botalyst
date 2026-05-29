@@ -1,0 +1,35 @@
+BOTALYST EDA REPORT
+====================
+
+File: January_23.xlsx
+Rows: 626
+Columns: 8
+
+Column Names:
+order_id, orderDate, customer_id, Resturant_ID, Fooditem, quantity, deliver_status, payment_method
+
+Missing Values:
+order_id          0
+orderDate         0
+customer_id       0
+Resturant_ID      0
+Fooditem          0
+quantity          0
+deliver_status    0
+payment_method    0
+dtype: int64
+
+Summary (Describe):
+             order_id                   orderDate  customer_id  Resturant_ID     Fooditem    quantity deliver_status payment_method
+count      626.000000                         626   626.000000    626.000000   626.000000  626.000000            626            626
+unique            NaN                         NaN          NaN           NaN          NaN         NaN              2              3
+top               NaN                         NaN          NaN           NaN          NaN         NaN      Delivered            UPI
+freq              NaN                         NaN          NaN           NaN          NaN         NaN            590            402
+mean    254313.500000  2023-01-17 09:00:34.504792    14.920128    213.071885  2149.993610    5.437700            NaN            NaN
+min     254001.000000         2023-01-01 00:00:00     1.000000    211.000000  2141.000000    1.000000            NaN            NaN
+25%     254157.250000         2023-01-10 00:00:00     5.000000    212.000000  2145.000000    3.000000            NaN            NaN
+50%     254313.500000         2023-01-17 00:00:00    15.000000    212.000000  2147.000000    5.000000            NaN            NaN
+75%     254469.750000         2023-01-25 00:00:00    25.000000    214.000000  2154.000000    8.000000            NaN            NaN
+max     254626.000000         2023-01-31 00:00:00    30.000000    217.000000  2167.000000   10.000000            NaN            NaN
+std        180.854914                         NaN     9.149427      1.970082     7.575537    2.807439            NaN            NaN
+
