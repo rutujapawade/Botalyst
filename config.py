@@ -39,3 +39,4 @@ app.config['MYSQL_DB'] = os.environ.get('MYSQLDATABASE')
 app.config['MYSQL_PORT'] = int(os.environ.get('MYSQLPORT', 3306))
 
 mysql = MySQL(app)
+

@@ -1,33 +1,73 @@
-from dotenv import load_dotenv
-load_dotenv()   # ✅ MUST be first
+# from dotenv import load_dotenv
+# load_dotenv()   # ✅ MUST be first
+# import os
+# from flask import (
+#     Flask, render_template, request, jsonify,
+#     send_file, session, redirect
+# )
+# from openai import OpenAI
+# from config import Config
+# import random
+# from datetime import datetime, timedelta
+# import bcrypt
+# import pandas as pd
+# import matplotlib
+# matplotlib.use("Agg")
+# import matplotlib.pyplot as plt
+# import os
+# from werkzeug.utils import secure_filename
+# from flask_mysqldb import MySQL
+# from flask_session import Session
 import os
-from flask import (
-    Flask, render_template, request, jsonify,
-    send_file, session, redirect
-)
+from flask import Flask, render_template, request, jsonify, session, redirect, send_file
+from flask_mysqldb import MySQL
+from flask_session import Session
 from openai import OpenAI
-from config import Config
-import random
-from datetime import datetime, timedelta
 import bcrypt
+import random
 import pandas as pd
+from datetime import datetime, timedelta
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
-import os
 from werkzeug.utils import secure_filename
-from flask_mysqldb import MySQL
-from flask_session import Session
 
+app = Flask(__name__)
+
+# --- CONFIGURATION ---
+app.config['SECRET_KEY'] = os.getenv("SECRET_KEY", "botalyst_secret_key")
+# Railway ke variables
+app.config['MYSQL_HOST'] = os.environ.get('MYSQLHOST')
+app.config['MYSQL_USER'] = os.environ.get('MYSQLUSER')
+app.config['MYSQL_PASSWORD'] = os.environ.get('MYSQLPASSWORD')
+app.config['MYSQL_DB'] = os.environ.get('MYSQLDATABASE')
+app.config['MYSQL_PORT'] = int(os.environ.get('MYSQLPORT', 3306))
+
+# Session config
+app.config["SESSION_PERMANENT"] = False
+app.config["SESSION_TYPE"] = "filesystem"
+
+# Initialize
+Session(app)
+mysql = MySQL(app)
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+
+# Folders
+UPLOAD_FOLDER = "uploads"
+REPORT_FOLDER = "reports"
+CHARTS_FOLDER = os.path.join("static", "charts")
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+os.makedirs(REPORT_FOLDER, exist_ok=True)
+os.makedirs(CHARTS_FOLDER, exist_ok=True)
 
 
 # ---------------------------
 # APP CONFIG
 
-app = Flask(__name__)
-app.config.from_object(Config)
-# ✅ Initialize OpenAI client
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+# app = Flask(__name__)
+# app.config.from_object(Config)
+# # ✅ Initialize OpenAI client
+# client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 
 
