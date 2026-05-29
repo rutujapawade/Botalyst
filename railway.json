@@ -1,0 +1,5 @@
+{
+  "build": {
+    "aptPackages": ["libmariadb-dev", "gcc"]
+  }
+}
