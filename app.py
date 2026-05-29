@@ -71,21 +71,21 @@ os.makedirs(CHARTS_FOLDER, exist_ok=True)
 
 
 
-# Session config
-app.config["SESSION_PERMANENT"] = False
-app.config["SESSION_TYPE"] = "filesystem"
-Session(app)
+# # Session config
+# app.config["SESSION_PERMANENT"] = False
+# app.config["SESSION_TYPE"] = "filesystem"
+# Session(app)
 
-mysql = MySQL(app)
+# mysql = MySQL(app)
 
-# folders
-UPLOAD_FOLDER = "uploads"
-REPORT_FOLDER = "reports"
-CHARTS_FOLDER = os.path.join("static", "charts")
+# # folders
+# UPLOAD_FOLDER = "uploads"
+# REPORT_FOLDER = "reports"
+# CHARTS_FOLDER = os.path.join("static", "charts")
 
-os.makedirs(UPLOAD_FOLDER, exist_ok=True)
-os.makedirs(REPORT_FOLDER, exist_ok=True)
-os.makedirs(CHARTS_FOLDER, exist_ok=True)
+# os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+# os.makedirs(REPORT_FOLDER, exist_ok=True)
+# os.makedirs(CHARTS_FOLDER, exist_ok=True)
 
 
 # ---------------------------
