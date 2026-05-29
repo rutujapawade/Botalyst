@@ -1,29 +1,3 @@
-# import os
-# from dotenv import load_dotenv
-
-# import os
-
-# class Config:
-#     SECRET_KEY = os.getenv("SECRET_KEY")
-#     MYSQL_HOST = os.getenv("MYSQL_HOST")
-#     MYSQL_USER = os.getenv("MYSQL_USER")
-#     MYSQL_PASSWORD = os.getenv("MYSQL_PASSWORD")
-#     MYSQL_DB = os.getenv("MYSQL_DB")
-
-#     OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-
-
-# load_dotenv()
-
-# class Config:
-#     SECRET_KEY = os.getenv("SECRET_KEY", "botalyst_secret_key")
-
-#     MYSQL_HOST = os.getenv("MYSQL_HOST", "localhost")
-#     MYSQL_USER = os.getenv("MYSQL_USER", "root")
-#     MYSQL_PASSWORD = os.getenv("MYSQL_PASSWORD", "")
-#     MYSQL_DB = os.getenv("MYSQL_DB", "botalyst_db")
-
-
 import os
 from dotenv import load_dotenv
 
@@ -32,10 +6,10 @@ load_dotenv()
 class Config:
     SECRET_KEY = os.getenv("SECRET_KEY", "botalyst_secret")
 
-    MYSQL_HOST = os.getenv("MYSQLHOST")
-    MYSQL_USER = os.getenv("MYSQLUSER")
-    MYSQL_PASSWORD = os.getenv("MYSQLPASSWORD")
-    MYSQL_DB = os.getenv("MYSQLDATABASE")
-    MYSQL_PORT = int(os.getenv("MYSQLPORT", 3306))
+    MYSQL_HOST = os.getenv("MYSQL_HOST")
+    MYSQL_USER = os.getenv("MYSQL_USER")
+    MYSQL_PASSWORD = os.getenv("MYSQL_PASSWORD")
+    MYSQL_DB = os.getenv("MYSQL_DB")
+    MYSQL_PORT = int(os.getenv("MYSQL_PORT", 3306))
 
     OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")

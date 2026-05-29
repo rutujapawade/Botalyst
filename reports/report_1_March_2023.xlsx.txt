@@ -1,0 +1,14 @@
+
+BOTALYST REPORT
+Rows: 765
+Columns: 8
+Missing:
+order_id          0
+orderDate         0
+customer_id       0
+Resturant_ID      0
+Fooditem          0
+quantity          0
+deliver_status    0
+payment_method    0
+dtype: int64

@@ -5,10 +5,11 @@ from datetime import datetime, timedelta
 from dotenv import load_dotenv
 load_dotenv()
 
+
+from flask import Flask, render_template, request, jsonify, send_file, session, redirect
 import pymysql
 pymysql.install_as_MySQLdb()
 
-from flask import Flask, render_template, request, jsonify, send_file, session, redirect
 from flask_mysqldb import MySQL
 from flask_session import Session
 
@@ -28,14 +29,14 @@ from werkzeug.utils import secure_filename
 # ---------------------------
 app = Flask(__name__)
 
-app.config["SECRET_KEY"] = os.getenv("SECRET_KEY", "botalyst_secret_key")
+app.config["SECRET_KEY"] = os.getenv("SECRET_KEY", "botalyst_secret")
 
-# Railway / ENV FIXED NAMES
-app.config['MYSQL_HOST'] = os.environ.get('MYSQL_HOST')
-app.config['MYSQL_USER'] = os.environ.get('MYSQL_USER')
-app.config['MYSQL_PASSWORD'] = os.environ.get('MYSQL_PASSWORD')
-app.config['MYSQL_DB'] = os.environ.get('MYSQL_DATABASE')
-app.config['MYSQL_PORT'] = int(os.environ.get('MYSQL_PORT', 3306))
+# FIXED ENV (IMPORTANT)
+app.config["MYSQL_HOST"] = os.getenv("MYSQL_HOST")
+app.config["MYSQL_USER"] = os.getenv("MYSQL_USER")
+app.config["MYSQL_PASSWORD"] = os.getenv("MYSQL_PASSWORD")
+app.config["MYSQL_DB"] = os.getenv("MYSQL_DB")
+app.config["MYSQL_PORT"] = int(os.getenv("MYSQL_PORT", 3306))
 
 # Session
 app.config["SESSION_TYPE"] = "filesystem"
@@ -59,7 +60,7 @@ os.makedirs(CHARTS_FOLDER, exist_ok=True)
 
 
 # ---------------------------
-# ROUTES (PAGES)
+# ROUTES
 # ---------------------------
 @app.route("/")
 def index():
@@ -103,18 +104,17 @@ def logout():
 
 
 # ---------------------------
-# TEST DB
+# DB TEST
 # ---------------------------
 @app.route("/test-db")
 def test_db():
     cur = mysql.connection.cursor()
     cur.execute("SHOW TABLES")
-    data = cur.fetchall()
-    return str(data)
+    return str(cur.fetchall())
 
 
 # ---------------------------
-# AUTH APIs
+# SIGNUP
 # ---------------------------
 @app.route("/api/signup", methods=["POST"])
 def signup():
@@ -126,19 +126,16 @@ def signup():
     password = data.get("password")
 
     if not full_name or not mobile or not password:
-        return jsonify({"success": False, "message": "Required fields missing"}), 400
+        return jsonify({"success": False, "message": "Missing fields"}), 400
 
     password_hash = bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
 
     try:
         cur = mysql.connection.cursor()
 
-        cur.execute(
-            "SELECT id FROM users WHERE mobile=%s OR email=%s",
-            (mobile, email)
-        )
+        cur.execute("SELECT id FROM users WHERE mobile=%s OR email=%s", (mobile, email))
         if cur.fetchone():
-            return jsonify({"success": False, "message": "User already exists"}), 409
+            return jsonify({"success": False, "message": "User exists"}), 409
 
         cur.execute("""
             INSERT INTO users (full_name, email, mobile, password_hash, is_verified)
@@ -154,6 +151,9 @@ def signup():
         return jsonify({"success": False, "message": str(e)}), 500
 
 
+# ---------------------------
+# LOGIN
+# ---------------------------
 @app.route("/api/login", methods=["POST"])
 def login():
     data = request.json
@@ -178,8 +178,7 @@ def login():
         if bcrypt.checkpw(password.encode(), hash_pw.encode()):
             session["user_logged_in"] = True
             session["user_id"] = user_id
-
-            return jsonify({"success": True, "user_id": user_id}), 200
+            return jsonify({"success": True, "user_id": user_id})
 
         return jsonify({"success": False, "message": "Wrong password"}), 401
 
@@ -188,7 +187,7 @@ def login():
 
 
 # ---------------------------
-# CHAT API
+# CHAT
 # ---------------------------
 @app.route("/api/chat", methods=["POST"])
 def chat():
@@ -199,7 +198,7 @@ def chat():
         response = client.chat.completions.create(
             model="gpt-4o-mini",
             messages=[
-                {"role": "system", "content": "You are BotAlyst, answer only data science topics."},
+                {"role": "system", "content": "You are BotAlyst for data science only."},
                 {"role": "user", "content": message}
             ],
             temperature=0.3
@@ -215,15 +214,15 @@ def chat():
 
 
 # ---------------------------
-# FILE UPLOAD
+# UPLOAD
 # ---------------------------
 @app.route("/api/upload", methods=["POST"])
 def upload():
     user_id = request.form.get("user_id")
-
     file = request.files.get("file")
+
     if not file:
-        return jsonify({"success": False, "message": "No file"}), 400
+        return jsonify({"success": False}), 400
 
     filename = secure_filename(file.filename)
     path = os.path.join(UPLOAD_FOLDER, filename)
@@ -242,7 +241,7 @@ def upload():
 
 
 # ---------------------------
-# REPORT GENERATION
+# REPORT
 # ---------------------------
 @app.route("/api/generate-report", methods=["POST"])
 def generate_report():
@@ -261,12 +260,8 @@ def generate_report():
 BOTALYST REPORT
 Rows: {df.shape[0]}
 Columns: {df.shape[1]}
-
 Missing:
 {df.isnull().sum()}
-
-Describe:
-{df.describe(include='all')}
 """
 
     report_name = f"report_{user_id}_{file_name}.txt"
