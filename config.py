@@ -12,4 +12,4 @@ class Config:
     MYSQL_DB = os.getenv("MYSQLDATABASE")
     MYSQL_PORT = int(os.getenv("MYSQLPORT", 3306))
 
-    OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+    OPENAI_API_KEY = os.getenv("GEMINI_API_KEY")

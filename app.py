@@ -13,7 +13,7 @@ pymysql.install_as_MySQLdb()
 from flask_mysqldb import MySQL
 from flask_session import Session
 
-from openai import OpenAI
+# from openai import OpenAI
 import bcrypt
 
 import pandas as pd
@@ -32,7 +32,21 @@ from config import Config
 app = Flask(__name__)
 # app.config.from_object(Config)
 # ✅ Initialize OpenAI client
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+# client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+
+import google.generativeai as genai
+import os
+
+genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
+
+model = genai.GenerativeModel("gemini-1.5-flash")
+def get_ai_response(prompt):
+    try:
+        response = model.generate_content(prompt)
+        return response.text
+    except Exception as e:
+        return "AI temporarily unavailable"
+    
 app.config["SECRET_KEY"] = os.getenv("SECRET_KEY", "botalyst_secret")
 
 # AISA KAREIN (Use this instead):
@@ -428,24 +442,16 @@ def chat():
         return jsonify({"success": False, "message": "Invalid input"}), 400
 
     try:
-        response = client.chat.completions.create(
-            model="gpt-4o-mini",
-            messages=[
-                {
-                    "role": "system",
-                    "content": (
-                        "You are BotAlyst, an AI assistant specialized ONLY in "
-                        "Data Analytics, Data Science, Engineering, Python, SQL, "
-                        "Pandas, Machine Learning, and statistics. "
-                        "If a question is outside these topics, politely refuse."
-                    )
-                },
-                {"role": "user", "content": message}
-            ],
-            temperature=0.3
-        )
+        prompt = f"""
+You are BotAlyst, an AI assistant specialized ONLY in
+Data Analytics, Data Science, Engineering, Python, SQL,
+Pandas, Machine Learning, and Statistics.
 
-        bot_reply = response.choices[0].message.content
+User Question:
+{message}
+"""
+
+        bot_reply = get_ai_response(prompt)
 
         return jsonify({
             "success": True,
@@ -457,8 +463,7 @@ def chat():
             "success": False,
             "message": str(e)
         }), 500
-
-
+    
 @app.route("/api/new-chat", methods=["POST"])
 def new_chat():
     session.pop("active_project_id", None)
