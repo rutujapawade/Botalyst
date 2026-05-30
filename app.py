@@ -30,7 +30,7 @@ from config import Config
 # APP CONFIG
 
 app = Flask(__name__)
-app.config.from_object(Config)
+# app.config.from_object(Config)
 # ✅ Initialize OpenAI client
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 app.config["SECRET_KEY"] = os.getenv("SECRET_KEY", "botalyst_secret")
@@ -95,7 +95,12 @@ def user_page():
     return render_template("user.html", user_id=user_id, full_name=full_name, email=email)
 
 
-
+@app.route("/debug-db")
+def debug_db():
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT DATABASE()")
+    db = cur.fetchone()
+    return str(db)
 
 @app.route("/api/logout")
 def user_logout():
@@ -216,22 +221,40 @@ def login():
     password = data.get("password")
 
     if not login_id or not password:
-        return jsonify({"success": False, "message": "Login ID and password required"}), 400
+        return jsonify({
+            "success": False,
+            "message": "Login ID and password required"
+        }), 400
 
     try:
         cur = mysql.connection.cursor()
-        cur.execute("SELECT id, password_hash FROM users WHERE email=%s OR mobile=%s", (login_id, login_id))
+
+        # fetch user
+        cur.execute(
+            "SELECT id, password_hash FROM users WHERE email=%s OR mobile=%s",
+            (login_id, login_id)
+        )
         user = cur.fetchone()
         cur.close()
 
+        # user not found
         if not user:
-            return jsonify({"success": False, "message": "User not found"}), 404
+            return jsonify({
+                "success": False,
+                "message": "User not found"
+            }), 404
 
         user_id, password_hash = user
 
-        if bcrypt.checkpw(password.encode("utf-8"), password_hash.encode("utf-8")):
+        # bcrypt check (SAFE VERSION)
+        if bcrypt.checkpw(
+            password.encode("utf-8"),
+            password_hash.encode("utf-8")
+        ):
             session["user_logged_in"] = True
             session["user_id"] = user_id
+
+            # log login info
             ip = request.remote_addr
             user_agent = request.headers.get("User-Agent")
 
@@ -243,17 +266,23 @@ def login():
             mysql.connection.commit()
             cur.close()
 
-            # return jsonify({"success": True, "message": "Login successful", "user_id": user_id}), 200
+            return jsonify({
+                "success": True,
+                "message": "Login successful",
+                "user_id": user_id
+            }), 200
 
-
-            return jsonify({"success": True, "message": "Login successful", "user_id": user_id}), 200
         else:
-            return jsonify({"success": False, "message": "Invalid password"}), 401
+            return jsonify({
+                "success": False,
+                "message": "Invalid password"
+            }), 401
 
     except Exception as e:
-        return jsonify({"success": False, "message": str(e)}), 500
-
-# ---------------------------
+        return jsonify({
+            "success": False,
+            "message": str(e)
+        }), 500
 # DB TEST
 # ---------------------------
 @app.route("/test-db")
